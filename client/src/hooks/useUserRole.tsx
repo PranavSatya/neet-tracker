@@ -19,8 +19,14 @@ export function useUserRole() {
       try {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
-          setRole(userDoc.data().role || "user");
+          const userData = userDoc.data();
+          const userRole = userData.role || "user";
+          console.log("User UID:", user.uid);
+          console.log("User data from Firestore:", userData);
+          console.log("User role:", userRole);
+          setRole(userRole);
         } else {
+          console.log("No user document found for UID:", user.uid, "defaulting to user");
           setRole("user"); // Default to user if no document exists
         }
       } catch (error) {

@@ -35,6 +35,7 @@ function AuthRouter() {
   }
 
   // Redirect based on role after login
+  console.log("Current user role in App.tsx:", role);
   return (
     <Switch>
       <Route path="/login">
