@@ -47,11 +47,11 @@ export default function AdminDashboard() {
   const fetchAllRecords = async () => {
     try {
       const collections = [
-        { name: "preventive_maintenance", type: "🛠️ Preventive Maintenance" },
-        { name: "corrective_maintenance", type: "⚙️ Corrective Maintenance" },
-        { name: "change_requests", type: "🔁 Change Request" },
-        { name: "gp_live_check", type: "📡 GP Live Check" },
-        { name: "patroller", type: "🚶 Patroller" },
+        { name: "preventive_maintenance", type: "Preventive Maintenance Form" },
+        { name: "corrective_maintenance", type: "Corrective Maintenance Form" },
+        { name: "change_requests", type: "Change Request Form" },
+        { name: "gp_live_check", type: "GP Live Check Form" },
+        { name: "patroller", type: "Patroller Form" },
       ];
 
       const allRecords: MaintenanceRecord[] = [];
@@ -169,14 +169,14 @@ export default function AdminDashboard() {
 
   const getTypeBadge = (type: string) => {
     const colors: Record<string, string> = {
-      "🛠️ Preventive Maintenance": "bg-blue-100 text-blue-800",
-      "⚙️ Corrective Maintenance": "bg-red-100 text-red-800",
-      "🔁 Change Request": "bg-green-100 text-green-800",
-      "📡 GP Live Check": "bg-purple-100 text-purple-800",
-      "🚶 Patroller": "bg-yellow-100 text-yellow-800",
+      "Preventive Maintenance Form": "bg-blue-100 text-blue-800",
+      "Corrective Maintenance Form": "bg-red-100 text-red-800",
+      "Change Request Form": "bg-green-100 text-green-800",
+      "GP Live Check Form": "bg-purple-100 text-purple-800",
+      "Patroller Form": "bg-yellow-100 text-yellow-800",
     };
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[type] || colors["🛠️ Preventive Maintenance"]}`}>
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[type] || colors["Preventive Maintenance Form"]}`}>
         {type}
       </span>
     );
@@ -306,11 +306,11 @@ export default function AdminDashboard() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Activities</SelectItem>
-                      <SelectItem value="🛠️ Preventive Maintenance">🛠️ Preventive Maintenance</SelectItem>
-                      <SelectItem value="⚙️ Corrective Maintenance">⚙️ Corrective Maintenance</SelectItem>
-                      <SelectItem value="🔁 Change Request">🔁 Change Request</SelectItem>
-                      <SelectItem value="📡 GP Live Check">📡 GP Live Check</SelectItem>
-                      <SelectItem value="🚶 Patroller">🚶 Patroller</SelectItem>
+                      <SelectItem value="Preventive Maintenance Form">Preventive Maintenance Form</SelectItem>
+                      <SelectItem value="Corrective Maintenance Form">Corrective Maintenance Form</SelectItem>
+                      <SelectItem value="Change Request Form">Change Request Form</SelectItem>
+                      <SelectItem value="GP Live Check Form">GP Live Check Form</SelectItem>
+                      <SelectItem value="Patroller Form">Patroller Form</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
