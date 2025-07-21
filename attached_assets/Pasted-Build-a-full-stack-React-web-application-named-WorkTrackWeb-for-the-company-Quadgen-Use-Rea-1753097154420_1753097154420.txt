@@ -1,0 +1,72 @@
+Build a full-stack React web application named **WorkTrackWeb** for the company **Quadgen**. Use React (with Vite or Create React App), Firebase Firestore as the backend, and TailwindCSS + Framer Motion + ShadCN UI for UI design and animation. The app should include the following features:
+
+---
+
+🔐 **Authentication & Role-Based Routing:**
+- Firebase Auth with email/password login.
+- After login, check the user’s role in the `users` Firestore collection (document ID = user UID, field: `role`: "admin" or "user").
+- Redirect based on role:
+  - Admin → `/admin-dashboard`
+  - User → `/activity-selector`
+
+---
+
+🧑‍💼 **User Dashboard (Activity Selector):**
+- Show activity options:
+  - 🛠️ Preventive
+  - ⚙️ Corrective
+  - 🔁 Change Request
+  - 📡 GP Live Check
+  - 🚶 Patroller
+- Each activity redirects to its corresponding form.
+
+---
+
+📋 **Form Pages (Users):**
+1. **CorrectiveForm.js**
+2. **PreventiveForm.js**
+3. **ChangeRequestForm.js**
+- Each form submits data to its respective Firestore collection:
+  - `corrective_maintenance`, `preventive_maintenance`, `change_requests`
+- Include proper input validation.
+- Add a success animation on submission.
+
+---
+
+🛠️ **Admin Dashboard:**
+- Path: `/admin-dashboard`
+- Fetch and display all submitted data from:
+  - `corrective_maintenance`
+  - `preventive_maintenance`
+  - `change_requests`
+- Include:
+  - Filter by activity (dropdown for 🛠️ ⚙️ 🔁 📡 🚶)
+  - Filter by date (date picker)
+  - “Export to CSV” button to download all visible records
+  - Clean, professional look
+
+---
+
+💡 **UI/UX Requirements:**
+- Use TailwindCSS for styling and layout
+- Use ShadCN UI components
+- Use Framer Motion for smooth page transitions and subtle animations
+- Ensure login page and all components have a clean, corporate-style design
+- All cursor interactions and section transitions should be smooth and responsive
+
+---
+
+🔥 **File/Folder Structure Suggestions:**
+- `/src/components/` – Reusable components
+- `/src/pages/` – Page-level components (LoginPage.js, AdminDashboard.js, ActivitySelector.js)
+- `/src/forms/` – Form components
+- `/src/hooks/` – Custom hooks (like `useUserRole.js`)
+- `/src/firebase.js` – Firebase config
+- `/src/styles/` – CSS files like `correctiveform.css`
+
+---
+
+Add final polish like loader spinners, animated placeholders, and form reset after submission.
+
+This app should be deployable on Replit with Firebase Auth + Firestore as the backend.
+
