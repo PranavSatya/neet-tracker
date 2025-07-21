@@ -13,6 +13,8 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import PreventiveForm from "@/forms/PreventiveForm";
 import CorrectiveForm from "@/forms/CorrectiveForm";
 import ChangeRequestForm from "@/forms/ChangeRequestForm";
+import GPLiveCheckForm from "@/forms/GPLiveCheckForm";
+import PatrollerForm from "@/forms/PatrollerForm";
 import NotFound from "@/pages/not-found";
 
 function AuthRouter() {
@@ -65,6 +67,18 @@ function AuthRouter() {
       <Route path="/change-request-form">
         <ProtectedRoute>
           <ChangeRequestForm />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/gp-live-check-form">
+        <ProtectedRoute>
+          <GPLiveCheckForm />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/patroller-form">
+        <ProtectedRoute>
+          <PatrollerForm />
         </ProtectedRoute>
       </Route>
 

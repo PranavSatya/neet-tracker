@@ -17,11 +17,14 @@ import { Wrench } from "lucide-react";
 import { Link } from "wouter";
 
 const correctiveSchema = z.object({
-  equipmentId: z.string().min(1, "Equipment ID is required"),
-  issueType: z.string().min(1, "Issue type is required"),
-  incidentDate: z.string().min(1, "Incident date is required"),
-  urgency: z.string().min(1, "Urgency level is required"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
+  faultID: z.string().min(1, "Fault ID is required"),
+  faultDescription: z.string().min(10, "Fault Description must be at least 10 characters"),
+  siteName: z.string().min(1, "Site Name is required"),
+  reportDate: z.string().min(1, "Date of Report is required"),
+  actionTaken: z.string().min(10, "Corrective Action Taken must be at least 10 characters"),
+  technicianName: z.string().min(1, "Technician Name is required"),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
 });
 
 type CorrectiveFormData = z.infer<typeof correctiveSchema>;
@@ -35,11 +38,12 @@ export default function CorrectiveForm() {
   const form = useForm<CorrectiveFormData>({
     resolver: zodResolver(correctiveSchema),
     defaultValues: {
-      equipmentId: "",
-      issueType: "",
-      incidentDate: "",
-      urgency: "",
-      description: "",
+      faultID: "",
+      faultDescription: "",
+      siteName: "",
+      reportDate: "",
+      actionTaken: "",
+      technicianName: "",
     },
   });
 
@@ -111,84 +115,133 @@ export default function CorrectiveForm() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="equipmentId">Equipment ID</Label>
+                    <Label htmlFor="faultID">Fault ID</Label>
                     <Input
-                      id="equipmentId"
-                      placeholder="EQ-2024-002"
-                      {...form.register("equipmentId")}
+                      id="faultID"
+                      placeholder="FLT-2024-001"
+                      {...form.register("faultID")}
                       className="mt-2"
                     />
-                    {form.formState.errors.equipmentId && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.equipmentId.message}</p>
+                    {form.formState.errors.faultID && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.faultID.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="issueType">Issue Type</Label>
-                    <Select onValueChange={(value) => form.setValue("issueType", value)}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Select issue type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="mechanical-failure">Mechanical Failure</SelectItem>
-                        <SelectItem value="electrical-issue">Electrical Issue</SelectItem>
-                        <SelectItem value="software-problem">Software Problem</SelectItem>
-                        <SelectItem value="performance-degradation">Performance Degradation</SelectItem>
-                        <SelectItem value="safety-concern">Safety Concern</SelectItem>
-                        <SelectItem value="structural-damage">Structural Damage</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {form.formState.errors.issueType && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.issueType.message}</p>
+                    <Label htmlFor="siteName">Site Name</Label>
+                    <Input
+                      id="siteName"
+                      placeholder="Production Site A"
+                      {...form.register("siteName")}
+                      className="mt-2"
+                    />
+                    {form.formState.errors.siteName && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.siteName.message}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="incidentDate">Incident Date</Label>
+                    <Label htmlFor="reportDate">Date of Report</Label>
                     <Input
-                      id="incidentDate"
+                      id="reportDate"
                       type="date"
-                      {...form.register("incidentDate")}
+                      {...form.register("reportDate")}
                       className="mt-2"
                     />
-                    {form.formState.errors.incidentDate && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.incidentDate.message}</p>
+                    {form.formState.errors.reportDate && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.reportDate.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="urgency">Urgency</Label>
-                    <Select onValueChange={(value) => form.setValue("urgency", value)}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Select urgency" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="emergency">Emergency</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {form.formState.errors.urgency && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.urgency.message}</p>
+                    <Label htmlFor="technicianName">Technician Name</Label>
+                    <Input
+                      id="technicianName"
+                      placeholder="Jane Doe"
+                      {...form.register("technicianName")}
+                      className="mt-2"
+                    />
+                    {form.formState.errors.technicianName && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.technicianName.message}</p>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="description">Problem Description</Label>
+                  <Label htmlFor="faultDescription">Fault Description</Label>
                   <Textarea
-                    id="description"
-                    placeholder="Describe the issue and symptoms..."
+                    id="faultDescription"
+                    placeholder="Describe the fault and symptoms..."
                     rows={4}
-                    {...form.register("description")}
+                    {...form.register("faultDescription")}
                     className="mt-2"
                   />
-                  {form.formState.errors.description && (
-                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.description.message}</p>
+                  {form.formState.errors.faultDescription && (
+                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.faultDescription.message}</p>
                   )}
+                </div>
+
+                <div>
+                  <Label htmlFor="actionTaken">Corrective Action Taken</Label>
+                  <Textarea
+                    id="actionTaken"
+                    placeholder="Describe the corrective actions taken..."
+                    rows={4}
+                    {...form.register("actionTaken")}
+                    className="mt-2"
+                  />
+                  {form.formState.errors.actionTaken && (
+                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.actionTaken.message}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="beforePhoto">Upload Before Photo</Label>
+                    <Input
+                      id="beforePhoto"
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      className="mt-2"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="afterPhoto">Upload After Photo</Label>
+                    <Input
+                      id="afterPhoto"
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <Label>GPS Location</Label>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="mt-2 w-fit"
+                    onClick={() => {
+                      if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition((position) => {
+                          form.setValue("lat" as any, position.coords.latitude);
+                          form.setValue("lng" as any, position.coords.longitude);
+                          toast({
+                            title: "GPS Location Captured",
+                            description: `Lat: ${position.coords.latitude.toFixed(6)}, Lng: ${position.coords.longitude.toFixed(6)}`,
+                          });
+                        });
+                      }
+                    }}
+                  >
+                    Get GPS Location
+                  </Button>
                 </div>
 
                 <div className="flex space-x-4">

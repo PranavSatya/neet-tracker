@@ -36,7 +36,7 @@ const activities = [
     description: "Real-time monitoring and verification of systems",
     icon: Radio,
     color: "purple",
-    disabled: true,
+    path: "/gp-live-check-form",
   },
   {
     id: "patroller",
@@ -44,7 +44,7 @@ const activities = [
     description: "Regular inspection rounds and safety checks",
     icon: UserRound,
     color: "yellow",
-    disabled: true,
+    path: "/patroller-form",
   },
 ];
 

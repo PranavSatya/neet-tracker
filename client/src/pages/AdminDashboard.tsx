@@ -47,9 +47,11 @@ export default function AdminDashboard() {
   const fetchAllRecords = async () => {
     try {
       const collections = [
-        { name: "preventive_maintenance", type: "🛠️ Preventive" },
-        { name: "corrective_maintenance", type: "⚙️ Corrective" },
+        { name: "preventive_maintenance", type: "🛠️ Preventive Maintenance" },
+        { name: "corrective_maintenance", type: "⚙️ Corrective Maintenance" },
         { name: "change_requests", type: "🔁 Change Request" },
+        { name: "gp_live_check", type: "📡 GP Live Check" },
+        { name: "patroller", type: "🚶 Patroller" },
       ];
 
       const allRecords: MaintenanceRecord[] = [];
@@ -167,12 +169,14 @@ export default function AdminDashboard() {
 
   const getTypeBadge = (type: string) => {
     const colors: Record<string, string> = {
-      "🛠️ Preventive": "bg-blue-100 text-blue-800",
-      "⚙️ Corrective": "bg-red-100 text-red-800",
+      "🛠️ Preventive Maintenance": "bg-blue-100 text-blue-800",
+      "⚙️ Corrective Maintenance": "bg-red-100 text-red-800",
       "🔁 Change Request": "bg-green-100 text-green-800",
+      "📡 GP Live Check": "bg-purple-100 text-purple-800",
+      "🚶 Patroller": "bg-yellow-100 text-yellow-800",
     };
     return (
-      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[type] || colors["🛠️ Preventive"]}`}>
+      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[type] || colors["🛠️ Preventive Maintenance"]}`}>
         {type}
       </span>
     );
@@ -302,9 +306,11 @@ export default function AdminDashboard() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Activities</SelectItem>
-                      <SelectItem value="🛠️ Preventive">🛠️ Preventive</SelectItem>
-                      <SelectItem value="⚙️ Corrective">⚙️ Corrective</SelectItem>
+                      <SelectItem value="🛠️ Preventive Maintenance">🛠️ Preventive Maintenance</SelectItem>
+                      <SelectItem value="⚙️ Corrective Maintenance">⚙️ Corrective Maintenance</SelectItem>
                       <SelectItem value="🔁 Change Request">🔁 Change Request</SelectItem>
+                      <SelectItem value="📡 GP Live Check">📡 GP Live Check</SelectItem>
+                      <SelectItem value="🚶 Patroller">🚶 Patroller</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

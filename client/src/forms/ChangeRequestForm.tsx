@@ -17,12 +17,14 @@ import { RefreshCw } from "lucide-react";
 import { Link } from "wouter";
 
 const changeRequestSchema = z.object({
-  system: z.string().min(1, "System/Equipment is required"),
-  changeType: z.string().min(1, "Change type is required"),
-  requestedDate: z.string().min(1, "Requested date is required"),
-  businessImpact: z.string().min(1, "Business impact is required"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  justification: z.string().min(10, "Business justification must be at least 10 characters"),
+  requestID: z.string().min(1, "Request ID is required"),
+  siteName: z.string().min(1, "Site Name is required"),
+  changeDescription: z.string().min(10, "Description of Change must be at least 10 characters"),
+  priority: z.string().min(1, "Priority Level is required"),
+  requestedBy: z.string().min(1, "Requested By is required"),
+  requestDate: z.string().min(1, "Date of Request is required"),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
 });
 
 type ChangeRequestFormData = z.infer<typeof changeRequestSchema>;
@@ -36,12 +38,12 @@ export default function ChangeRequestForm() {
   const form = useForm<ChangeRequestFormData>({
     resolver: zodResolver(changeRequestSchema),
     defaultValues: {
-      system: "",
-      changeType: "",
-      requestedDate: "",
-      businessImpact: "",
-      description: "",
-      justification: "",
+      requestID: "",
+      siteName: "",
+      changeDescription: "",
+      priority: "",
+      requestedBy: "",
+      requestDate: "",
     },
   });
 
@@ -113,98 +115,125 @@ export default function ChangeRequestForm() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="system">System/Equipment</Label>
+                    <Label htmlFor="requestID">Request ID</Label>
                     <Input
-                      id="system"
-                      placeholder="Production Line A"
-                      {...form.register("system")}
+                      id="requestID"
+                      placeholder="CR-2024-001"
+                      {...form.register("requestID")}
                       className="mt-2"
                     />
-                    {form.formState.errors.system && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.system.message}</p>
+                    {form.formState.errors.requestID && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.requestID.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="changeType">Change Type</Label>
-                    <Select onValueChange={(value) => form.setValue("changeType", value)}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Select change type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="software-update">Software Update</SelectItem>
-                        <SelectItem value="hardware-upgrade">Hardware Upgrade</SelectItem>
-                        <SelectItem value="configuration-change">Configuration Change</SelectItem>
-                        <SelectItem value="process-improvement">Process Improvement</SelectItem>
-                        <SelectItem value="security-enhancement">Security Enhancement</SelectItem>
-                        <SelectItem value="feature-addition">Feature Addition</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {form.formState.errors.changeType && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.changeType.message}</p>
+                    <Label htmlFor="siteName">Site Name</Label>
+                    <Input
+                      id="siteName"
+                      placeholder="Main Office Site"
+                      {...form.register("siteName")}
+                      className="mt-2"
+                    />
+                    {form.formState.errors.siteName && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.siteName.message}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="requestedDate">Requested Date</Label>
+                    <Label htmlFor="requestedBy">Requested By</Label>
                     <Input
-                      id="requestedDate"
-                      type="date"
-                      {...form.register("requestedDate")}
+                      id="requestedBy"
+                      placeholder="John Manager"
+                      {...form.register("requestedBy")}
                       className="mt-2"
                     />
-                    {form.formState.errors.requestedDate && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.requestedDate.message}</p>
+                    {form.formState.errors.requestedBy && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.requestedBy.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="businessImpact">Business Impact</Label>
-                    <Select onValueChange={(value) => form.setValue("businessImpact", value)}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Select business impact" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="critical">Critical</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {form.formState.errors.businessImpact && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.businessImpact.message}</p>
+                    <Label htmlFor="requestDate">Date of Request</Label>
+                    <Input
+                      id="requestDate"
+                      type="date"
+                      {...form.register("requestDate")}
+                      className="mt-2"
+                    />
+                    {form.formState.errors.requestDate && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.requestDate.message}</p>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="description">Change Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Detailed description of requested changes..."
-                    rows={4}
-                    {...form.register("description")}
-                    className="mt-2"
-                  />
-                  {form.formState.errors.description && (
-                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.description.message}</p>
+                  <Label htmlFor="priority">Priority Level</Label>
+                  <Select onValueChange={(value) => form.setValue("priority", value)}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Select priority level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="critical">Critical</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {form.formState.errors.priority && (
+                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.priority.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="justification">Business Justification</Label>
+                  <Label htmlFor="changeDescription">Description of Change</Label>
                   <Textarea
-                    id="justification"
-                    placeholder="Explain the business need and expected benefits..."
-                    rows={3}
-                    {...form.register("justification")}
+                    id="changeDescription"
+                    placeholder="Describe the requested changes..."
+                    rows={4}
+                    {...form.register("changeDescription")}
                     className="mt-2"
                   />
-                  {form.formState.errors.justification && (
-                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.justification.message}</p>
+                  {form.formState.errors.changeDescription && (
+                    <p className="text-red-500 text-sm mt-1">{form.formState.errors.changeDescription.message}</p>
                   )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="document">Upload Supporting Document</Label>
+                    <Input
+                      id="document"
+                      type="file"
+                      accept=".pdf,.doc,.docx,.txt"
+                      className="mt-2"
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <Label>GPS Location</Label>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="mt-2 w-fit"
+                      onClick={() => {
+                        if (navigator.geolocation) {
+                          navigator.geolocation.getCurrentPosition((position) => {
+                            form.setValue("lat" as any, position.coords.latitude);
+                            form.setValue("lng" as any, position.coords.longitude);
+                            toast({
+                              title: "GPS Location Captured",
+                              description: `Lat: ${position.coords.latitude.toFixed(6)}, Lng: ${position.coords.longitude.toFixed(6)}`,
+                            });
+                          });
+                        }
+                      }}
+                    >
+                      Get GPS Location
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="flex space-x-4">

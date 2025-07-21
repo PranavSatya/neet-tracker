@@ -1,84 +1,82 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Settings } from "lucide-react";
+import { Radio } from "lucide-react";
 import { Link } from "wouter";
 
-const preventiveSchema = z.object({
-  siteID: z.string().min(1, "Site ID is required"),
-  siteName: z.string().min(1, "Site Name is required"),
-  date: z.string().min(1, "Date is required"),
-  time: z.string().min(1, "Time is required"),
-  equipmentStatus: z.string().min(1, "Equipment Status is required"),
-  remarks: z.string().min(10, "Remarks must be at least 10 characters"),
-  technicianName: z.string().min(1, "Technician Name is required"),
+const gpLiveCheckSchema = z.object({
+  gpName: z.string().min(1, "GP Name is required"),
+  mandal: z.string().min(1, "Mandal is required"),
+  ttNumber: z.string().min(1, "TT Number is required"),
+  checkDate: z.string().min(1, "Date of Check is required"),
+  status: z.string().min(1, "Status is required"),
+  remarks: z.string().min(5, "Remarks must be at least 5 characters"),
+  signalStrength: z.string().min(1, "Signal Strength is required"),
   lat: z.number().optional(),
   lng: z.number().optional(),
 });
 
-type PreventiveFormData = z.infer<typeof preventiveSchema>;
+type GPLiveCheckFormData = z.infer<typeof gpLiveCheckSchema>;
 
-export default function PreventiveForm() {
+export default function GPLiveCheckForm() {
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const form = useForm<PreventiveFormData>({
-    resolver: zodResolver(preventiveSchema),
+  const form = useForm<GPLiveCheckFormData>({
+    resolver: zodResolver(gpLiveCheckSchema),
     defaultValues: {
-      siteID: "",
-      siteName: "",
-      date: "",
-      time: "",
-      equipmentStatus: "",
+      gpName: "",
+      mandal: "",
+      ttNumber: "",
+      checkDate: "",
+      status: "",
       remarks: "",
-      technicianName: "",
+      signalStrength: "",
     },
   });
 
-  const onSubmit = async (data: PreventiveFormData) => {
+  const onSubmit = async (data: GPLiveCheckFormData) => {
     if (!user) return;
 
     setLoading(true);
     try {
-      await addDoc(collection(db, "preventive_maintenance"), {
+      await addDoc(collection(db, "gp_live_check"), {
         ...data,
         userId: user.uid,
         userEmail: user.email,
-        status: "pending",
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+        createdAt: new Date(),
+        activityType: "GP Live Check"
       });
 
       setShowSuccess(true);
-      form.reset();
-      
-      setTimeout(() => {
-        setShowSuccess(false);
-      }, 3000);
-
       toast({
         title: "Success!",
-        description: "Preventive maintenance request submitted successfully.",
+        description: "GP Live Check record submitted successfully",
       });
+
+      setTimeout(() => {
+        setShowSuccess(false);
+        form.reset();
+      }, 2000);
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error submitting GP Live Check:", error);
       toast({
         title: "Error",
-        description: "Failed to submit the form. Please try again.",
+        description: "Failed to submit GP Live Check record",
         variant: "destructive",
       });
     } finally {
@@ -105,101 +103,99 @@ export default function PreventiveForm() {
           <Card className="shadow-lg">
             <CardContent className="p-8">
               <div className="flex items-center mb-6">
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-                  <Settings className="text-blue-600 h-6 w-6" />
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mr-4">
+                  <Radio className="text-purple-600 h-6 w-6" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-800">Preventive Maintenance Form</h2>
-                  <p className="text-slate-600">Schedule and track preventive maintenance activities</p>
+                  <h2 className="text-2xl font-bold text-slate-800">GP Live Check Form</h2>
+                  <p className="text-slate-600">Real-time monitoring and verification of systems</p>
                 </div>
               </div>
 
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="siteID">Site ID</Label>
+                    <Label htmlFor="gpName">GP Name</Label>
                     <Input
-                      id="siteID"
-                      placeholder="Site-001"
-                      {...form.register("siteID")}
+                      id="gpName"
+                      placeholder="GP Station Name"
+                      {...form.register("gpName")}
                       className="mt-2"
                     />
-                    {form.formState.errors.siteID && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.siteID.message}</p>
+                    {form.formState.errors.gpName && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.gpName.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="siteName">Site Name</Label>
+                    <Label htmlFor="mandal">Mandal</Label>
                     <Input
-                      id="siteName"
-                      placeholder="Main Production Site"
-                      {...form.register("siteName")}
+                      id="mandal"
+                      placeholder="Mandal Name"
+                      {...form.register("mandal")}
                       className="mt-2"
                     />
-                    {form.formState.errors.siteName && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.siteName.message}</p>
+                    {form.formState.errors.mandal && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.mandal.message}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="date">Date</Label>
+                    <Label htmlFor="ttNumber">TT Number</Label>
                     <Input
-                      id="date"
+                      id="ttNumber"
+                      placeholder="TT-001"
+                      {...form.register("ttNumber")}
+                      className="mt-2"
+                    />
+                    {form.formState.errors.ttNumber && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.ttNumber.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="checkDate">Date of Check</Label>
+                    <Input
+                      id="checkDate"
                       type="date"
-                      {...form.register("date")}
+                      {...form.register("checkDate")}
                       className="mt-2"
                     />
-                    {form.formState.errors.date && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.date.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="time">Time</Label>
-                    <Input
-                      id="time"
-                      type="time"
-                      {...form.register("time")}
-                      className="mt-2"
-                    />
-                    {form.formState.errors.time && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.time.message}</p>
+                    {form.formState.errors.checkDate && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.checkDate.message}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="equipmentStatus">Equipment Status</Label>
-                    <Select onValueChange={(value) => form.setValue("equipmentStatus", value)}>
+                    <Label htmlFor="status">Status (Live / Not Live)</Label>
+                    <Select onValueChange={(value) => form.setValue("status", value)}>
                       <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Select equipment status" />
+                        <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="operational">Operational</SelectItem>
-                        <SelectItem value="needs-maintenance">Needs Maintenance</SelectItem>
-                        <SelectItem value="out-of-order">Out of Order</SelectItem>
-                        <SelectItem value="under-repair">Under Repair</SelectItem>
+                        <SelectItem value="live">Live</SelectItem>
+                        <SelectItem value="not-live">Not Live</SelectItem>
                       </SelectContent>
                     </Select>
-                    {form.formState.errors.equipmentStatus && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.equipmentStatus.message}</p>
+                    {form.formState.errors.status && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.status.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="technicianName">Technician Name</Label>
+                    <Label htmlFor="signalStrength">Signal Strength</Label>
                     <Input
-                      id="technicianName"
-                      placeholder="John Smith"
-                      {...form.register("technicianName")}
+                      id="signalStrength"
+                      placeholder="Strong / Medium / Weak"
+                      {...form.register("signalStrength")}
                       className="mt-2"
                     />
-                    {form.formState.errors.technicianName && (
-                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.technicianName.message}</p>
+                    {form.formState.errors.signalStrength && (
+                      <p className="text-red-500 text-sm mt-1">{form.formState.errors.signalStrength.message}</p>
                     )}
                   </div>
                 </div>
@@ -208,7 +204,7 @@ export default function PreventiveForm() {
                   <Label htmlFor="remarks">Remarks</Label>
                   <Textarea
                     id="remarks"
-                    placeholder="Detailed remarks about the maintenance..."
+                    placeholder="Additional observations and remarks..."
                     rows={4}
                     {...form.register("remarks")}
                     className="mt-2"
@@ -220,7 +216,7 @@ export default function PreventiveForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="photo">Upload Photo</Label>
+                    <Label htmlFor="photo">Upload Network Screen Photo</Label>
                     <Input
                       id="photo"
                       type="file"
@@ -235,7 +231,7 @@ export default function PreventiveForm() {
                     <Button 
                       type="button" 
                       variant="outline" 
-                      className="mt-2"
+                      className="mt-2 w-fit"
                       onClick={() => {
                         if (navigator.geolocation) {
                           navigator.geolocation.getCurrentPosition((position) => {
@@ -258,9 +254,9 @@ export default function PreventiveForm() {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className={`${showSuccess ? 'bg-green-600 hover:bg-green-700' : ''} transition-all duration-300`}
+                    className={`bg-purple-600 hover:bg-purple-700 ${showSuccess ? 'bg-purple-600 hover:bg-purple-700' : ''} transition-all duration-300`}
                   >
-                    {loading ? "Submitting..." : showSuccess ? "✓ Submitted!" : "Submit Request"}
+                    {loading ? "Submitting..." : showSuccess ? "✓ Submitted!" : "Submit Check"}
                   </Button>
                   <Button type="button" variant="outline" onClick={() => form.reset()}>
                     Reset Form
