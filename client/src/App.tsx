@@ -10,11 +10,12 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import LoginPage from "@/pages/LoginPage";
 import ActivitySelector from "@/pages/ActivitySelector";
 import AdminDashboard from "@/pages/AdminDashboard";
-import PreventiveForm from "@/forms/PreventiveForm";
-import CorrectiveForm from "@/forms/CorrectiveForm";
-import ChangeRequestForm from "@/forms/ChangeRequestForm";
-import GPLiveCheckForm from "@/forms/GPLiveCheckForm";
-import PatrollerForm from "@/forms/PatrollerForm";
+import PreventiveMaintenanceForm from "@/forms/PreventiveMaintenanceForm";
+import CorrectiveMaintenanceForm from "@/forms/CorrectiveMaintenanceForm";
+import ChangeRequestMaintenanceForm from "@/forms/ChangeRequestMaintenanceForm";
+import GPLiveCheckMaintenanceForm from "@/forms/GPLiveCheckMaintenanceForm";
+import PatrollerMaintenanceForm from "@/forms/PatrollerMaintenanceForm";
+import PunchInForm from "@/forms/PunchInForm";
 import NotFound from "@/pages/not-found";
 
 function AuthRouter() {
@@ -40,6 +41,12 @@ function AuthRouter() {
   // console.log("Current user role in App.tsx:", role);
   return (
     <Switch>
+      <Route path="/punch-in-form">
+        <ProtectedRoute>
+          <PunchInForm />
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/admin-dashboard">
         <ProtectedRoute requiredRole="admin">
           <AdminDashboard />
@@ -54,31 +61,31 @@ function AuthRouter() {
       
       <Route path="/preventive-form">
         <ProtectedRoute>
-          <PreventiveForm />
+          <PreventiveMaintenanceForm />
         </ProtectedRoute>
       </Route>
       
       <Route path="/corrective-form">
         <ProtectedRoute>
-          <CorrectiveForm />
+          <CorrectiveMaintenanceForm />
         </ProtectedRoute>
       </Route>
       
       <Route path="/change-request-form">
         <ProtectedRoute>
-          <ChangeRequestForm />
+          <ChangeRequestMaintenanceForm />
         </ProtectedRoute>
       </Route>
       
       <Route path="/gp-live-check-form">
         <ProtectedRoute>
-          <GPLiveCheckForm />
+          <GPLiveCheckMaintenanceForm />
         </ProtectedRoute>
       </Route>
       
       <Route path="/patroller-form">
         <ProtectedRoute>
-          <PatrollerForm />
+          <PatrollerMaintenanceForm />
         </ProtectedRoute>
       </Route>
 

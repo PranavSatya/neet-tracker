@@ -2,22 +2,30 @@ import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Settings, Wrench, RefreshCw, Radio, UserRound, LogOut } from "lucide-react";
+import { Settings, Wrench, RefreshCw, Radio, UserRound, LogOut, Clock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const activities = [
   {
+    id: "punch-in",
+    title: "⏰ Daily Punch-In",
+    description: "Start your daily field activities with photo and location",
+    icon: Clock,
+    color: "indigo",
+    path: "/punch-in-form",
+  },
+  {
     id: "preventive",
-    title: "🛠️ Preventive",
-    description: "Scheduled maintenance to prevent equipment failures",
+    title: "🛠️ FRT Daily Activity - Preventive Maintenance",
+    description: "OTDR testing, fiber monitoring, and GP span management",
     icon: Settings,
     color: "blue",
     path: "/preventive-form",
   },
   {
     id: "corrective",
-    title: "⚙️ Corrective",
-    description: "Repair work to fix identified issues or failures",
+    title: "⚙️ Corrective Maintenance",
+    description: "TT handling, cut location identification, and restoration",
     icon: Wrench,
     color: "red",
     path: "/corrective-form",
@@ -25,7 +33,7 @@ const activities = [
   {
     id: "change-request",
     title: "🔁 Change Request",
-    description: "Modifications or improvements to existing systems",
+    description: "Material consumption tracking and activity changes",
     icon: RefreshCw,
     color: "green",
     path: "/change-request-form",
@@ -33,15 +41,15 @@ const activities = [
   {
     id: "gp-live-check",
     title: "📡 GP Live Check",
-    description: "Real-time monitoring and verification of systems",
+    description: "Comprehensive GP site verification and equipment checks",
     icon: Radio,
     color: "purple",
     path: "/gp-live-check-form",
   },
   {
     id: "patroller",
-    title: "🚶 Patroller",
-    description: "Regular inspection rounds and safety checks",
+    title: "🚶 Patroller Task & Observations",
+    description: "Field patrol activities, damage identification, and reporting",
     icon: UserRound,
     color: "yellow",
     path: "/patroller-form",
