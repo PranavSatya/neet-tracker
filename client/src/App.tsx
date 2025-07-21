@@ -35,16 +35,18 @@ function AuthRouter() {
   }
 
   // Redirect based on role after login
-  console.log("Current user role in App.tsx:", role);
+  // console.log("Current user role in App.tsx:", role);
   return (
     <Switch>
-      <Route path="/login">
-        <Redirect to={role === "admin" ? "/admin-dashboard" : "/activity-selector"} />
+      <Route path="/admin-dashboard">
+        <ProtectedRoute requiredRole="admin">
+          <AdminDashboard />
+        </ProtectedRoute>
       </Route>
       
       <Route path="/activity-selector">
         <ProtectedRoute>
-          <ActivitySelector />
+          {role === "admin" ? <Redirect to="/admin-dashboard" /> : <ActivitySelector />}
         </ProtectedRoute>
       </Route>
       
@@ -65,11 +67,9 @@ function AuthRouter() {
           <ChangeRequestForm />
         </ProtectedRoute>
       </Route>
-      
-      <Route path="/admin-dashboard">
-        <ProtectedRoute requiredRole="admin">
-          <AdminDashboard />
-        </ProtectedRoute>
+
+      <Route path="/login">
+        <Redirect to={role === "admin" ? "/admin-dashboard" : "/activity-selector"} />
       </Route>
 
       <Route path="/">

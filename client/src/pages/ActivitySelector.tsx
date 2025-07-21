@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
-import { Settings, Wrench, RefreshCw, Radio, UserRound } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Settings, Wrench, RefreshCw, Radio, UserRound, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const activities = [
   {
@@ -47,9 +49,18 @@ const activities = [
 ];
 
 export default function ActivitySelector() {
+  const { logout } = useAuth();
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto">
+        {/* Header with logout */}
+        <div className="flex justify-end mb-6">
+          <Button variant="outline" onClick={logout} className="flex items-center gap-2">
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
+        </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
