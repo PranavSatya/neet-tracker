@@ -15,6 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Camera, MapPin, Clock } from "lucide-react";
 import { Link } from "wouter";
 import LiveCameraCapture from "@/components/LiveCameraCapture";
+import GPSelector from "@/components/GPSelector";
+import { GPDataService, GPReference } from "@/lib/gpDataService";
 
 const punchInSchema = z.object({
   photoData: z.object({
@@ -23,7 +25,7 @@ const punchInSchema = z.object({
     lat: z.number().optional(),
     lng: z.number().optional(),
     base64Image: z.string(),
-  }).nullable().refine((data) => data !== null, "Photo with GEO tag is required"),
+  }).optional().refine((data) => data !== undefined, "Photo with GEO tag is required"),
   district: z.string().min(1, "District is required"),
   clusterBaseLocation: z.string().min(1, "Cluster/Base Location is required"),
   date: z.string().min(1, "Date is required"),
@@ -39,13 +41,14 @@ type PunchInFormData = z.infer<typeof punchInSchema>;
 export default function PunchInForm() {
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [selectedGP, setSelectedGP] = useState<GPReference | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
   const form = useForm<PunchInFormData>({
     resolver: zodResolver(punchInSchema),
     defaultValues: {
-      photoData: null,
+      photoData: undefined,
       district: "",
       clusterBaseLocation: "",
       date: new Date().toISOString().split('T')[0],
@@ -55,8 +58,16 @@ export default function PunchInForm() {
     },
   });
 
+  const districts = GPDataService.getAllDistricts();
+
   const handlePhotoCapture = (photoData: any) => {
     form.setValue("photoData", photoData);
+  };
+
+  const handleGPSelect = (gp: GPReference) => {
+    setSelectedGP(gp);
+    form.setValue("district", gp.District);
+    form.setValue("clusterBaseLocation", `${gp["Originating Mandal"]} - ${gp["Terminating Mandal"]}`);
   };
 
   const onSubmit = async (data: PunchInFormData) => {
@@ -66,6 +77,7 @@ export default function PunchInForm() {
     try {
       await addDoc(collection(db, "punch_in"), {
         ...data,
+        selectedGPData: selectedGP,
         userId: user.uid,
         userEmail: user.email,
         createdAt: new Date(),
@@ -81,6 +93,7 @@ export default function PunchInForm() {
       setTimeout(() => {
         setShowSuccess(false);
         form.reset();
+        setSelectedGP(null);
       }, 2000);
     } catch (error) {
       console.error("Error submitting punch-in:", error);
@@ -135,15 +148,31 @@ export default function PunchInForm() {
                   )}
                 </div>
 
+                {/* GP Selection with Reference Data */}
+                <div>
+                  <GPSelector
+                    label="Select GP from Reference Database"
+                    onGPSelect={handleGPSelect}
+                    selectedGP={selectedGP}
+                    required
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="district">District *</Label>
-                    <Input
-                      id="district"
-                      placeholder="Enter district"
-                      {...form.register("district")}
-                      className="mt-2"
-                    />
+                    <Select value={form.watch("district")} onValueChange={(value) => form.setValue("district", value)}>
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="Select district" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {districts.map(district => (
+                          <SelectItem key={district} value={district}>
+                            {district}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     {form.formState.errors.district && (
                       <p className="text-red-500 text-sm mt-1">{form.formState.errors.district.message}</p>
                     )}
@@ -153,7 +182,7 @@ export default function PunchInForm() {
                     <Label htmlFor="clusterBaseLocation">Cluster / Base Location *</Label>
                     <Input
                       id="clusterBaseLocation"
-                      placeholder="Enter cluster/base location"
+                      placeholder="Auto-populated from GP selection or enter manually"
                       {...form.register("clusterBaseLocation")}
                       className="mt-2"
                     />

@@ -10,6 +10,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import LoginPage from "@/pages/LoginPage";
 import ActivitySelector from "@/pages/ActivitySelector";
 import AdminDashboard from "@/pages/AdminDashboard";
+import GPDashboard from "@/pages/GPDashboard";
 import PreventiveMaintenanceForm from "@/forms/PreventiveMaintenanceForm";
 import CorrectiveMaintenanceForm from "@/forms/CorrectiveMaintenanceForm";
 import ChangeRequestMaintenanceForm from "@/forms/ChangeRequestMaintenanceForm";
@@ -50,6 +51,12 @@ function AuthRouter() {
       <Route path="/admin-dashboard">
         <ProtectedRoute requiredRole="admin">
           <AdminDashboard />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/gp-dashboard">
+        <ProtectedRoute requiredRole="admin">
+          <GPDashboard />
         </ProtectedRoute>
       </Route>
       
